@@ -10,16 +10,15 @@ RUN apt-get update && apt-get install -y \
     && rm -rf /var/lib/apt/lists/*
 
 # Install Python deps first for better layer caching
-COPY requirements.txt.
+COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Download spaCy English model
 RUN python -m spacy download en_core_web_sm
 
 # Copy application code
-COPY./api./api
-COPY./models./models
-COPY./src./src
+COPY ./api ./api
+COPY ./models ./models
 
 EXPOSE 8000
 
