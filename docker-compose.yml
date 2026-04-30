@@ -2,18 +2,18 @@ version: '3.8'
 
 services:
   api:
-    build:.
+    build: .
     container_name: afrisalaries-api
     ports:
       - "8000:8000"
     env_file:
-      -.env
+      - .env
     environment:
       - MODEL_PATH=/app/models/model.pkl
       - VECTORIZER_PATH=/app/models/vectorizer.pkl
     volumes:
-      -./models:/app/models
-      -./logs:/app/logs
+      - ./models:/app/models
+      - ./logs:/app/logs
     depends_on:
       - redis
       - db
