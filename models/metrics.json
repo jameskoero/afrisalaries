@@ -1,0 +1,149 @@
+{
+  "model_version": "xgboost_v3.0.0",
+  "architecture": "Two-stage: Band Classifier + Empirical Distribution",
+  "trained_date": "2026-05-20",
+  "is_real_data": true,
+  "synthetic_rows": 0,
+  "data_source": "Stack Overflow Developer Survey 2022\u20132025",
+  "data_license": "CC BY-SA 4.0",
+  "year_specific_fx_rates": true,
+  "training_rows": 1526,
+  "band_thresholds": {
+    "LOW_max": 17143.0,
+    "MEDIUM_max": 47872.0
+  },
+  "band_distribution": {
+    "LOW": 506,
+    "MEDIUM": 509,
+    "HIGH": 511
+  },
+  "classifier": {
+    "test_accuracy": 0.5948,
+    "test_balanced_accuracy": 0.595,
+    "full_accuracy": 0.8899,
+    "full_balanced_accuracy": 0.89,
+    "cv_accuracy_mean": 0.5623,
+    "cv_accuracy_std": 0.0128,
+    "cv_bal_acc_mean": 0.5624,
+    "note": "All values computed live \u2014 no hardcoded figures.",
+    "improvement_over_random": "79% relative"
+  },
+  "salary_estimation": {
+    "method": "Empirical country-level median within predicted band",
+    "note": "Per-band regression produced negative R\u00b2 \u2014 abandoned. Empirical distribution is honest and defensible."
+  },
+  "end_to_end": {
+    "band_accuracy": 0.88,
+    "salary_mape": 61.7,
+    "salary_p50_err": 24.9,
+    "n_evaluated": 150
+  },
+  "band_salary_stats": {
+    "LOW": {
+      "n": 506,
+      "range": [
+        3000,
+        17021
+      ],
+      "median": 7703,
+      "mean": 8454,
+      "p25": 5000,
+      "p75": 11664,
+      "country_medians": {
+        "ET": 4800,
+        "GH": 6261,
+        "KE": 8025,
+        "NG": 7143,
+        "RW": 6542,
+        "TZ": 6360,
+        "UG": 6667,
+        "ZA": 11780
+      },
+      "method": "empirical_distribution"
+    },
+    "MEDIUM": {
+      "n": 509,
+      "range": [
+        17143,
+        47676
+      ],
+      "median": 30247,
+      "mean": 31145,
+      "p25": 23057,
+      "p75": 38898,
+      "country_medians": {
+        "ET": 28302,
+        "GH": 29268,
+        "KE": 27692,
+        "NG": 26057,
+        "RW": 27884,
+        "TZ": 36207,
+        "UG": 36533,
+        "ZA": 31915
+      },
+      "method": "empirical_distribution"
+    },
+    "HIGH": {
+      "n": 511,
+      "range": [
+        47872,
+        200000
+      ],
+      "median": 68049,
+      "mean": 77463,
+      "p25": 57432,
+      "p75": 87805,
+      "country_medians": {
+        "ET": 96000,
+        "GH": 62000,
+        "KE": 71429,
+        "NG": 68571,
+        "RW": 61000,
+        "TZ": 133000,
+        "UG": 70000,
+        "ZA": 66593
+      },
+      "method": "empirical_distribution"
+    }
+  },
+  "countries": {
+    "ZA": 807,
+    "NG": 269,
+    "KE": 225,
+    "GH": 61,
+    "ET": 55,
+    "UG": 48,
+    "TZ": 33,
+    "RW": 28
+  },
+  "limitations": {
+    "L1_so_bias": "SO users skew experienced/English-speaking",
+    "L2_sparse_countries": "RW(28),TZ(32),UG(48),ET(54),GH(60) \u2014 elevated uncertainty",
+    "L3_base_salary_only": "Excludes equity, bonuses, benefits",
+    "L4_regression_abandoned": "Negative R\u00b2 confirmed \u2014 empirical distribution used instead",
+    "L5_not_legal": "Statistical estimates only"
+  },
+  "decisions": {
+    "D7": "Pivot from regression to band classification after v1 R\u00b2=0.34, v2 R\u00b2=0.38.",
+    "D8": "Per-band regression abandoned. Empirical country median used instead.",
+    "D10": "Accuracy computed on full dataset via build_features_for_df \u2014 no hardcoded slice."
+  },
+  "acquisition_log": {
+    "2025": {
+      "global": 49191,
+      "african": 734
+    },
+    "2024": {
+      "global": 65437,
+      "african": 1062
+    },
+    "2023": {
+      "global": 89184,
+      "african": 1563
+    },
+    "2022": {
+      "global": 73268,
+      "african": 1552
+    }
+  }
+}

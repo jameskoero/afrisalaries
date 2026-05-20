@@ -1,0 +1,22 @@
+{
+  "total_rows": 1526,
+  "source": "Stack Overflow Developer Survey 2022\u20132025",
+  "license": "CC BY-SA 4.0",
+  "is_real_data": true,
+  "countries": {
+    "ZA": 807,
+    "NG": 269,
+    "KE": 225,
+    "GH": 61,
+    "ET": 55,
+    "UG": 48,
+    "TZ": 33,
+    "RW": 28
+  },
+  "salary_stats": {
+    "min": 3000,
+    "max": 200000,
+    "median": 30378,
+    "mean": 39131
+  }
+}
