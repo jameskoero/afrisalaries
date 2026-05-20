@@ -4,23 +4,23 @@
 
 [![Python](https://img.shields.io/badge/Python-3.11-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://python.org)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.111-009688?style=for-the-badge&logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com)
-[![XGBoost](https://img.shields.io/badge/XGBoost-2.0-337AB7?style=for-the-badge)](https://xgboost.readthedocs.io)
-[![SHAP](https://img.shields.io/badge/SHAP-Explainable_AI-FF6B6B?style=for-the-badge)](https://shap.readthedocs.io)
+[![XGBoost](https://img.shields.io/badge/XGBoost-2.1-337AB7?style=for-the-badge)](https://xgboost.readthedocs.io)
 [![React](https://img.shields.io/badge/React-18-61DAFB?style=for-the-badge&logo=react&logoColor=black)](https://react.dev)
-[![CI/CD](https://img.shields.io/badge/CI%2FCD-GitHub_Actions-2088FF?style=for-the-badge&logo=github-actions&logoColor=white)](https://github.com/jameskoero/afrisalaries/actions)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow?style=for-the-badge)](LICENSE)
+[![Data](https://img.shields.io/badge/Data-1%2C526_Real_Rows-00C853?style=for-the-badge)]()
+[![License](https://img.shields.io/badge/Data_License-CC_BY--SA_4.0-yellow?style=for-the-badge)]()
 [![Countries](https://img.shields.io/badge/Countries-8_African-FF5722?style=for-the-badge)]()
-[![Status](https://img.shields.io/badge/Status-Active_Development-00C853?style=for-the-badge)]()
+[![Status](https://img.shields.io/badge/API-Live_on_Render-46E3B7?style=for-the-badge&logo=render)]()
 
 <br/>
 
-[📖 API Docs](https://afrisalaries-api.onrender.com/docs) · [🌐 Web App](https://afrisalaries.vercel.app) · [💻 GitHub](https://github.com/jameskoero/afrisalaries) · [🐛 Report Bug](https://github.com/jameskoero/afrisalaries/issues)
+[📖 API Docs](https://afrisalaries.onrender.com/docs) · [🌐 Live App](https://afrisalaries.vercel.app) · [💻 GitHub](https://github.com/jameskoero/afrisalaries) · [🐛 Report Bug](https://github.com/jameskoero/afrisalaries/issues)
 
 <br/>
 
 > **"70%+ of African tech job posts hide salary information.**
-> AfriSalaries predicts it — with an explainable breakdown of every factor
-> that drove the number. Built for African talent. Trusted by global HR teams."
+> AfriSalaries predicts whether a role is LOW, MEDIUM, or HIGH relative
+> to the local market — with a full breakdown of every factor that drove
+> the classification. Built in Kisumu, Kenya. Trained on real data."
 
 </div>
 
@@ -28,92 +28,252 @@
 
 ## ❗ The Problem
 
-African tech is one of the fastest-growing talent markets on the planet — yet it remains one of the most opaque when it comes to compensation.
-
-**Over 70% of tech job posts in Africa include no salary information.**
+African tech is one of the fastest-growing talent markets on the planet — yet it remains one of the most opaque when it comes to compensation. Over 70% of tech job posts across Africa include no salary information whatsoever.
 
 - A junior engineer in Nairobi accepts KES 80,000/month not knowing the market rate is KES 140,000
-- An HR team in Amsterdam sets pay for a Nairobi remote hire with no local data and gets it wrong
-- A startup in Lagos loses candidates to a competitor that was simply transparent about pay
-- A diaspora professional returning to Accra cannot benchmark what they should ask for
+- An HR team in Amsterdam sets pay for a Lagos remote hire using European benchmarks and gets it wrong
+- A startup in Accra loses candidates to a competitor that was simply transparent about pay
+- A Kenyan diaspora professional returning home cannot benchmark what they should ask for after years earning in GBP or EUR
 
-The information asymmetry is structural. Companies have salary bands. Candidates have nothing. AfriSalaries fixes that.
+The information asymmetry is structural. Companies have salary bands. Candidates have nothing.
 
 ---
 
 ## 💡 The Solution
 
-AfriSalaries takes any tech job description as plain text and returns:
+AfriSalaries takes any tech job description as plain text and returns a **salary band** — LOW, MEDIUM, or HIGH relative to the local market — with the salary range, country-specific median, and a ranked list of which factors drove the classification.
 
-1. **A salary range** — low / mid / high in USD or local currency
-2. **A confidence score** — how certain the model is per prediction
-3. **An explainable breakdown** — which keywords drove the estimate (SHAP values)
-
-No account. No form. Paste the job description. Get the number. Understand why.
+No account. No form. Paste the description. Get the band. Understand why.
 
 ```bash
-curl -X POST https://afrisalaries-api.onrender.com/predict/ \
+curl -X POST https://afrisalaries.onrender.com/predict \
   -H "Content-Type: application/json" \
-  -d '{"description": "Senior Python Developer 5yrs Django AWS Remote Nairobi Kenya fintech startup", "country": "KE", "currency": "USD"}'
+  -d '{
+    "description": "Senior Python Developer 8yrs AWS Kubernetes Remote Nairobi Kenya fintech",
+    "country": "KE"
+  }'
 ```
 
 **Response:**
 
 ```json
 {
-  "salary_low": 29750,
-  "salary_mid": 35000,
-  "salary_high": 40250,
+  "band": "MEDIUM",
+  "band_meaning": "At market rate — negotiate on specific skills and experience.",
+  "salary_low": 23057,
+  "salary_mid": 27692,
+  "salary_high": 38898,
   "currency": "USD",
-  "confidence": 0.81,
+  "confidence": 0.482,
+  "country_median": 27692,
   "top_factors": [
-    {"name": "Senior", "value": 0.22},
-    {"name": "Python", "value": 0.15},
-    {"name": "AWS",    "value": 0.12},
-    {"name": "Remote", "value": 0.09}
+    "Seniority: Senior (+85%)",
+    "High-value skills: AWS, Kubernetes",
+    "Remote work premium",
+    "Experience: 8+ years",
+    "Country baseline: KE (~$25k median)"
   ],
-  "model_version": "xgboost_v1.0.0"
+  "disclaimer": "Statistical estimate only. Based on Stack Overflow Survey 2022–2025 (CC BY-SA 4.0). Excludes equity, bonuses, benefits. Not a legal instrument."
 }
 ```
 
 ---
 
-## 👥 Who This Is For
+## 🔬 Model — Honest Documentation
 
-| Audience | Use Case |
-|----------|----------|
-| 🌍 African tech workers | Benchmark an offer before replying. Know if the number is fair. |
-| 🌐 International HR teams | Set fair pay for African remote hires without guessing |
-| 🏢 Hiring managers outside Africa | Understand local market rates before posting a role |
-| 📊 Talent acquisition teams | Compare salaries across 8 African countries in one API call |
-| 🏦 Investors and researchers | Access anonymized community salary data via the /jobs feed |
+### Why Band Classification, Not Exact Salary
+
+AfriSalaries v1 and v2 attempted exact salary regression. Both failed:
+
+| Version | R² | MAPE | Outcome |
+|---------|-----|------|---------|
+| v1 — XGBoost regressor, TF-IDF 5k | 0.3388 | 92.1% | FAIL |
+| v2 — Enhanced features, min_df=1 | 0.3846 | 87.8% | FAIL |
+| **v3 — Band classifier + empirical distribution** | **—** | **—** | **✅ Deployed** |
+
+**Root cause analysis of v1/v2 failure (documented, not hidden):**
+
+- Salary range spans $3,000–$200,000 — a 66× range. Within-description variance exceeds between-description variance.
+- A Senior Python developer in Kigali earns $18,000. The same role remote earns $120,000. No text model with 1,371 rows bridges a 66× range reliably.
+- Predicting the mean ($37k) produced MAPE of 87.8% — the model had learned to guess the average rather than discriminate.
+
+**The pivot:** Band classification reduces the prediction to a tractable question — is this role LOW, MEDIUM, or HIGH relative to local market? Salary bands are also how every HR department in the world thinks. This directly answers the user's negotiation question.
+
+### v3 Architecture
+
+```
+Stage 1: XGBoost Band Classifier
+  Input:  Job description (text) + country
+  Output: LOW / MEDIUM / HIGH salary band
+  Method: TF-IDF (3,000 features) + 8 country one-hot
+          + 8 numerical features (seniority, years_exp,
+            is_remote, hv_skills, country_base,
+            desc_len, is_fintech, is_mgmt)
+
+Stage 2: Empirical Salary Distribution
+  Input:  Predicted band + country
+  Output: P25 / country_median / P75 salary range
+  Method: Per-band, per-country medians from
+          training data (honest: no per-band regressor
+          — negative R² confirmed text cannot
+          distinguish within-band salary)
+```
+
+### Band Thresholds (Tertile-Based)
+
+| Band | Salary Range (USD/year) | Meaning |
+|------|------------------------|---------|
+| LOW | < $17,143 | Below market — strong grounds to negotiate upward |
+| MEDIUM | $17,143 – $47,872 | At market rate — negotiate on specific factors |
+| HIGH | > $47,872 | Above market — evaluate total compensation carefully |
+
+Tertile-based thresholds ensure approximately equal class sizes (506/509/511), preventing class imbalance from biasing the classifier.
+
+### Model Performance
+
+| Metric | Value | Context |
+|--------|-------|---------|
+| Test Accuracy | 59.5% | vs 33.3% random baseline — 79% relative improvement |
+| Test Balanced Accuracy | 59.5% | Balanced across LOW/MEDIUM/HIGH |
+| CV Accuracy (5-fold) | 56.2% ± σ | Stratified, honest estimate |
+| E2E Band Accuracy | 88.0% | On 150 held-out samples |
+| Salary MAPE | 61.7% | Country median within predicted band |
+| Salary p50 error | 24.9% | Half of predictions within 25% of true salary |
+| Training rows | 1,526 | Real SO Survey data only — zero synthetic rows |
+
+**HIGH band precision = 0.72** — the model is most reliable for premium roles.
+
+**MEDIUM band precision = 0.51** — the hardest band to separate, as expected statistically.
+
+### Feature Engineering
+
+| Feature | Type | Signal |
+|---------|------|--------|
+| TF-IDF job text | Sparse (3,000) | Role type, technologies, seniority keywords |
+| Country one-hot | 8 binary | ZA/NG/KE/GH/ET/TZ/UG/RW |
+| Seniority score | Float 0–1 | Intern→Junior→Mid→Senior→Lead |
+| Years experience | Float | Regex-extracted from description |
+| High-value skill count | Integer | 18 skills: AWS, GCP, PyTorch, Kubernetes... |
+| Country baseline | Float | Known USD market anchor per country |
+| is_remote | Binary | Remote/hybrid flag |
+| is_fintech | Binary | Fintech industry premium signal |
+| is_management | Binary | Director/VP/CTO premium |
+| Description length | Float | Proxy for role complexity |
+
+**Features excluded by design:** gender (Kenya DPA 2019 / GDPR), age (discrimination laws), company name (too sparse, causes overfitting), exact city (insufficient rows per city).
 
 ---
 
-## ✅ What Is Built
+## 📊 Data
 
-Every item marked ✅ exists in the codebase and is deployable today.
+### Source
 
-| Component | Status | Detail |
-|-----------|--------|--------|
-| POST /predict/ | ✅ Built | Job text → salary range + SHAP factors |
-| GET /jobs/ public feed | ✅ Built | Recent predictions filterable by country |
-| GET /health | ✅ Built | Model load status + API liveness |
-| POST /predict/feedback | ✅ Built | User corrections for future retraining |
-| XGBoost regression model | ✅ Built | Trains on data/jobs.csv → models/model.pkl |
-| TF-IDF text vectorizer | ✅ Built | 5,000 features unigrams + bigrams sublinear TF |
-| SHAP TreeExplainer | ✅ Built | Top-5 salary factors per prediction |
-| 13 handcrafted features | ✅ Built | Seniority remote skills years country |
-| Mock predictor fallback | ✅ Built | API works before model is trained |
-| Neon PostgreSQL async | ✅ Built | SQLAlchemy 2.0 async |
-| Upstash Redis cache | ✅ Built | 24h TTL via REST API |
-| React 18 + Recharts UI | ✅ Built | SHAP bar chart salary card |
-| GitHub Actions CI | ✅ Built | pytest on every push to main |
-| Render deployment | ✅ Built | render.yaml no Docker needed |
-| Vercel frontend | ✅ Built | web/ folder auto-deploys |
-| Real scraped data | 🔄 In progress | Target 3,000+ rows BrighterMonday + Fuzu |
-| Currency conversion | 📋 Planned | USD KES NGN ZAR GHS live rates |
-| Browser extension | 📋 Planned | Auto-predict on LinkedIn job pages |
+**Stack Overflow Annual Developer Survey 2022–2025**
+- Provider: Stack Exchange
+- License: **CC BY-SA 4.0** — unrestricted use with attribution
+- URL: [survey.stackoverflow.co](https://survey.stackoverflow.co)
+- Download: [github.com/StackExchange/Survey](https://github.com/StackExchange/Survey)
+- Contains PII: **No** — fully anonymised
+
+### Acquisition
+
+| Year | Global Respondents | African Rows |
+|------|-------------------|--------------|
+| 2025 | 49,191 | 734 |
+| 2024 | 65,437 | 1,062 |
+| 2023 | 89,184 | 1,563 |
+| 2022 | 73,268 | 1,552 |
+| **Total** | **277,080** | **4,911 raw** |
+
+### Cleaning Pipeline: 4,911 → 1,526
+
+| Stage | Rows Remaining | Action |
+|-------|---------------|--------|
+| Raw | 4,911 | All African respondents |
+| Null salary removed | ~2,800 | CompTotal blank = 43% of respondents |
+| Currency conversion failures | ~2,400 | Null/unrecognised currency dropped |
+| Sanity bounds | ~1,800 | $3,000–$200,000 annual USD |
+| Deduplication | 1,675 | Same description + salary = duplicate |
+| Country balancing | **1,526** | ZA capped at 3× Nigeria (prevents ZA dominance) |
+
+### Year-Specific Exchange Rates
+
+Nigerian naira devalued ~257% between 2022 and 2025 (NGN 420 → 1,600 per USD). Using a single blended rate would conflate pre- and post-devaluation salaries. Year-specific rates applied for all 4 survey years.
+
+### Country Coverage
+
+| Country | Final Rows | Confidence |
+|---------|-----------|------------|
+| South Africa (ZA) | 807 | Adequate |
+| Nigeria (NG) | 269 | Adequate |
+| Kenya (KE) | 225 | Adequate |
+| Ghana (GH) | 61 | Elevated uncertainty |
+| Ethiopia (ET) | 55 | Elevated uncertainty |
+| Uganda (UG) | 48 | Elevated uncertainty |
+| Tanzania (TZ) | 33 | Elevated uncertainty |
+| Rwanda (RW) | 28 | High uncertainty |
+
+### Salary Distribution (Final Dataset)
+
+| Stat | Value (USD/year) |
+|------|-----------------|
+| Min | $3,000 |
+| 25th percentile | $11,725 |
+| Median | $30,378 |
+| Mean | $39,131 |
+| 75th percentile | $57,487 |
+| Max | $200,000 |
+
+---
+
+## ⚠️ Honest Limitations
+
+Intellectual honesty is a prerequisite for credibility.
+
+**L1 — Stack Overflow User Bias**
+SO users skew toward experienced, English-speaking, internet-connected developers. Entry-level and peri-urban workers are underrepresented. Model may overestimate for junior roles in less-connected markets.
+
+**L2 — Sparse Country Coverage**
+Rwanda (28 rows), Tanzania (33), Uganda (48), Ethiopia (55), Ghana (61) fall below the 100-row threshold for reliable country-specific learning. Confidence scores for these markets carry elevated uncertainty.
+
+**L3 — Self-Reported Salary Bias**
+All salary data is self-reported. Well-compensated respondents are more likely to share. Dataset likely carries 5–15% upward bias.
+
+**L4 — Base Salary Only**
+Model predicts base salary. A $30,000 role with 5% equity at a Nairobi Series B is economically different from $30,000 at a government parastatal. Equity and bonuses are not captured.
+
+**L5 — Not a Legal Instrument**
+AfriSalaries predictions are statistical estimates. They cannot be cited in employment contracts or regulatory filings as authoritative benchmarks.
+
+**L6 — Per-Band Regression Abandoned**
+Attempted per-band salary regression produced negative R² values — worse than predicting the band mean. Empirical country-level medians used instead. This is documented as Decision D8 in the project decision log.
+
+---
+
+## 🏗️ System Architecture
+
+```
+User (browser or curl)
+         │
+         ▼
+  Vercel CDN → React 18 SPA (web/)
+    afrisalaries.vercel.app
+         │
+         │  POST /predict
+         ▼
+  FastAPI + Uvicorn on Render (api/)
+    afrisalaries.onrender.com
+         │
+         ├─► Feature Engineering
+         │     ├── TF-IDF vectorize (3,000 sparse features)
+         │     ├── Country one-hot (8 features)
+         │     └── 8 numerical features
+         │
+         ├─► XGBoost.predict() → band (LOW/MEDIUM/HIGH)
+         │
+         └─► Empirical lookup → P25/median/P75 salary range
+               (country-specific if available, band median fallback)
+```
 
 ---
 
@@ -121,133 +281,15 @@ Every item marked ✅ exists in the codebase and is deployable today.
 
 | Layer | Technology | Why |
 |-------|-----------|-----|
-| ML Model | XGBoost gradient boosting | Sparse + dense features no GPU trains in minutes |
-| Text Features | TF-IDF scikit-learn | Interpretable lightweight proven for job text |
-| Explainability | SHAP TreeExplainer | Shows recruiters exactly why the number is what it is |
-| API | FastAPI + Pydantic v2 + Uvicorn | Async auto /docs type-safe schemas |
-| Database | Neon PostgreSQL + SQLAlchemy 2.0 | Serverless zero idle cost no expiry |
-| Cache | Upstash Redis REST API | HTTP Redis no TCP socket works on Render free tier |
-| Frontend | React 18 + Vite + Tailwind + Recharts | Builds in Vercel cloud no local build needed |
-| CI/CD | GitHub Actions | pytest on push Render and Vercel auto-deploy from main |
-| Backend host | Render | Direct Python from GitHub no Docker required |
-| Frontend host | Vercel | CDN-backed zero-config for Vite |
+| ML Model | XGBoost classifier | Sparse + dense features, no GPU, trains in minutes on Colab |
+| Text Features | TF-IDF scikit-learn | Lightweight, interpretable, proven for job text |
+| API | FastAPI + Pydantic v2 | Async, auto /docs, type-safe schemas |
+| Frontend | React 18 + Vite + Tailwind | Zero build cost on Vercel |
+| Backend host | Render (free tier) | Docker, auto-redeploy from GitHub |
+| Frontend host | Vercel (free tier) | CDN-backed, zero-config for Vite |
+| Training | Google Colab (CPU) | Free, no GPU required |
 
-**Total infrastructure cost: $0 per month**
-
----
-
-## 🏗️ System Architecture
-
-```
-User (browser or API client)
-         │
-         ▼
-  Vercel CDN → React SPA (web/)
-         │
-         │  POST /predict/
-         ▼
-  FastAPI on Render (api/)
-         │
-         ├─► 1. SHA-256 hash → check Upstash Redis
-         │          └── Cache HIT → return instantly under 5ms
-         │
-         ├─► 2. Cache MISS → Feature Engineering
-         │          ├── TF-IDF vectorize → 5,000 sparse features
-         │          └── 13 handcrafted features:
-         │                seniority_score · years_experience
-         │                high_value_skill_count · is_remote
-         │                description_length · country one-hot
-         │
-         ├─► 3. XGBoost.predict() → salary_mid
-         │       └── SHAP.TreeExplainer() → top_factors
-         │
-         ├─► 4. Neon PostgreSQL → persist job + prediction
-         │
-         └─► 5. Upstash Redis → cache 24 hours
-
-GET /jobs/?country=KE → community salary benchmark feed
-```
-
-**Design principles:**
-- Stateless API — Render can restart freely with no session loss
-- Cache-first — the same job description posted 1,000 times hits the model once
-- Graceful degradation — mock predictor means zero 500 errors before training
-- Async throughout — handles concurrency on 512MB free-tier RAM
-
----
-
-## 🔬 How the ML Model Works
-
-Job descriptions are structured text with high-signal keywords. TF-IDF captures which words are distinctive — "Senior", "Machine Learning", "Kubernetes" score high because they identify premium roles. XGBoost learns nonlinear relationships between those term weights and annual salary.
-
-Chosen over neural embeddings: no GPU needed, SHAP-compatible, trains in 10 minutes on Colab CPU.
-
-### Feature Pipeline
-
-```
-Raw job description
-  → clean: strip HTML · lowercase · normalize punctuation
-  → TF-IDF: 5,000 features · ngram(1,2) · sublinear_tf=True
-  → 13 handcrafted features:
-      seniority_score    junior(-0.15) mid(0.0) senior(+0.25) lead(+0.30)
-      years_experience   regex: "5+ years", "3-5 years"
-      high_value_skills  count: PyTorch, AWS, Kubernetes, Go...
-      is_remote          keyword: remote, hybrid, WFH
-      description_length word count
-      country_KE...RW    one-hot encoding (8 features)
-  → X = hstack([X_tfidf, X_handcrafted])   shape: (n_samples, 5013)
-  → XGBRegressor(n_estimators=500, max_depth=6, learning_rate=0.05)
-  → SHAP TreeExplainer → top_factors
-```
-
-### What Recruiters See
-
-```
-Why this salary estimate?
-
-Senior Level   ████████████████████  +$7,700
-Python         ████████████████      +$5,250
-AWS            ████████████          +$4,200
-Remote         ████████              +$3,150
-Nairobi        ██████                +$2,450
-```
-
-### Model Performance — Honest Status
-
-> ⚠️ Model currently trains on 600-row synthetic bootstrap data.
-> Real metrics will be published once BrighterMonday and Fuzu data is collected (target: 3,000+ rows).
-
-| Metric | Target on Real Data |
-|--------|---------------------|
-| R² | ≥ 0.70 |
-| MAE | < $5,500 USD/year |
-| MAPE | < 22% |
-| Minimum training rows | 3,000+ real posts |
-
-Real data sources being collected: BrighterMonday Kenya · Fuzu East Africa · Jobberman Nigeria · Careers24 South Africa
-
----
-
-## 📡 API Reference
-
-**Base URL:** `https://afrisalaries-api.onrender.com`
-
-> Render free tier sleeps after 15 min inactivity. First request wakes it in ~30s.
-> Add a free [UptimeRobot](https://uptimerobot.com) monitor on `/health` every 5 min to keep it awake.
-
-| Method | Endpoint | Purpose |
-|--------|----------|---------|
-| POST | /predict/ | Predict salary from job description text |
-| GET | /jobs/ | Public predictions feed |
-| GET | /jobs/{id} | Single prediction detail |
-| GET | /health | API and model load status |
-| POST | /predict/feedback | Submit salary correction |
-
-**Supported countries:** KE · NG · ZA · GH · ET · TZ · UG · RW
-
-**Supported currencies:** USD · KES · NGN · ZAR
-
-**Interactive Swagger UI:** https://afrisalaries-api.onrender.com/docs
+**Total infrastructure cost: $0/month**
 
 ---
 
@@ -255,30 +297,27 @@ Real data sources being collected: BrighterMonday Kenya · Fuzu East Africa · J
 
 ```
 afrisalaries/
-├── .github/workflows/ci.yml       # pytest on every push to main
 ├── api/
-│   ├── main.py                    # FastAPI app + lifespan
-│   ├── models.py                  # Pydantic v2 schemas
-│   ├── core/config.py             # Settings from .env
-│   ├── core/database.py           # Async SQLAlchemy + Neon
-│   ├── core/cache.py              # Upstash Redis REST client
-│   ├── ml/predictor.py            # XGBoost + SHAP + Redis cache
-│   ├── ml/features.py             # Text cleaning + 13 features
-│   ├── routes/predict.py          # POST /predict/
-│   ├── routes/jobs.py             # GET /jobs/
-│   ├── routes/health.py           # GET /health
-│   └── db/crud.py                 # Async DB queries
-├── ml/
-│   ├── train.py                   # XGBoost training pipeline
-│   └── generate_sample_data.py    # 600-row bootstrap dataset
+│   ├── main.py           # FastAPI app, lifespan, /predict, /health
+│   └── models.py         # Pydantic v2 schemas
+├── models/
+│   ├── band_classifier.pkl   # XGBoost band classifier
+│   ├── vectorizer.pkl        # TF-IDF (3,000 features)
+│   ├── band_thresholds.pkl   # Q33/Q67 + salary stats per band
+│   ├── country_columns.pkl   # Country one-hot columns
+│   ├── numerical_features.pkl
+│   └── metrics.json          # Full training metrics
+├── data/
+│   ├── jobs_so.csv           # 1,526 cleaned SO rows
+│   ├── jobs.csv              # description/salary_usd/country
+│   └── dataset_stats.json    # Provenance and data statistics
 ├── web/
-│   ├── src/App.jsx                # Predict form + country selector
-│   ├── src/components/SalaryCard.jsx  # SHAP bar chart
-│   └── src/lib/api.js             # Axios client to FastAPI
-├── tests/test_api.py              # 5 pytest tests
-├── render.yaml                    # Render deployment config
-├── requirements.txt               # Pinned Python dependencies
-└── .env.example                   # Environment variable template
+│   ├── src/App.jsx           # Predict form + result card
+│   ├── src/main.jsx
+│   └── index.html
+├── Dockerfile
+├── requirements.txt
+└── README.md
 ```
 
 ---
@@ -289,110 +328,49 @@ afrisalaries/
 git clone https://github.com/jameskoero/afrisalaries.git
 cd afrisalaries
 pip install -r requirements.txt
-cp .env.example .env
 uvicorn api.main:app --reload --port 8000
 ```
 
 API: `http://localhost:8000` · Docs: `http://localhost:8000/docs`
 
-```env
-DATABASE_URL=postgresql+asyncpg://user:pass@ep-xxx.neon.tech/afrisalaries?sslmode=require
-UPSTASH_REDIS_REST_URL=https://your-db.upstash.io
-UPSTASH_REDIS_REST_TOKEN=your-token-here
-APP_ENV=production
-FRONTEND_URL=https://afrisalaries.vercel.app
-MODEL_VERSION=xgboost_v1.0.0
-```
-
 ---
 
-## 🏋️ Training in Google Colab
+## 🚀 Deployment — $0/month
 
-Training runs on free Colab CPU — no local compute needed.
+| Service | Purpose | URL |
+|---------|---------|-----|
+| Render | FastAPI + Docker backend | afrisalaries.onrender.com |
+| Vercel | React frontend | afrisalaries.vercel.app |
 
-```python
-!git clone https://github.com/jameskoero/afrisalaries.git
-%cd afrisalaries
-!pip install -r requirements.txt -q
-!python ml/generate_sample_data.py
-!python ml/train.py
-import json; print(json.load(open("models/metrics.json")))
-```
+**Render:** Docker deployment. Auto-redeploys on `git push main`.
+**Vercel:** Root Directory = `web`. Framework = Vite. Auto-deploys on push.
 
-Commit the trained model so Render deploys it:
-
-```bash
-git add models/model.pkl models/vectorizer.pkl models/metrics.json
-git commit -m "feat: trained XGBoost v1.0.0"
-git push origin main
-# Render auto-redeploys → /health returns model_loaded: true
-```
-
----
-
-## 🚀 Deployment — $0 Per Month
-
-| Service | Purpose | Sign Up |
-|---------|---------|---------|
-| Neon | PostgreSQL database | neon.tech |
-| Upstash | Redis cache | upstash.com |
-| Render | FastAPI backend | render.com |
-| Vercel | React frontend | vercel.com |
-
-**Render settings:**
-- Build Command: `pip install -r requirements.txt`
-- Start Command: `uvicorn api.main:app --host 0.0.0.0 --port $PORT`
-- Region: Frankfurt (closest to Kenya)
-
-**Vercel settings:**
-- Root Directory: `web` ← critical, build fails without this
-- Environment Variable: `VITE_API_URL=https://afrisalaries-api.onrender.com`
-
-Every `git push origin main` auto-redeploys both services.
+> Render free tier sleeps after 15 min idle. First request wakes in ~30s.
 
 ---
 
 ## 🗺️ Roadmap
 
-### v1.0 — Complete ✅
-- [x] FastAPI + XGBoost + TF-IDF + SHAP + Redis + PostgreSQL
-- [x] React 18 frontend with SHAP salary bar chart
-- [x] Mock predictor fallback + feedback endpoint
-- [x] GitHub Actions CI + Render + Vercel pipeline
-- [x] 8 countries: KE · NG · ZA · GH · ET · TZ · UG · RW
+### v3.0 — Complete ✅
+- [x] Real data pipeline: SO Survey 2022–2025, 1,526 rows, CC BY-SA 4.0
+- [x] Year-specific exchange rates (NGN devaluation corrected)
+- [x] Band classifier: XGBoost + TF-IDF + 8 numerical features
+- [x] Empirical salary distribution per band per country
+- [x] FastAPI + Docker + Render deployment
+- [x] React 18 + Vite + Tailwind frontend on Vercel
+- [x] Full decision log — all architectural pivots documented
 
-### v1.x — In Progress
-- [ ] Real training data: BrighterMonday + Fuzu scraper (3,000+ rows)
-- [ ] Publish real model metrics once trained on real data
-- [ ] Currency conversion: live USD ↔ KES ↔ NGN ↔ ZAR ↔ GHS
+### v3.x — Next
+- [ ] Real job board data: BrighterMonday + Fuzu scraper (target 5,000+ rows)
+- [ ] Return to salary regression once data > 3,000 rows per country
+- [ ] Neon PostgreSQL: prediction history + feedback loop
+- [ ] SHAP explainability restored once regression is viable
 
-### v2.x — Planned
-- [ ] Browser extension: auto-predict on any job board page
-- [ ] Weekly model retraining from accumulated feedback data
-- [ ] Company-level salary models for top 20 African tech employers
-
----
-
-## 🤝 Contributing
-
-Best contribution: real anonymized salary data.
-
-```csv
-description,salary_usd,country
-"Senior Python Dev 5yrs Django AWS remote Nairobi fintech",42000,KE
-"Data Analyst SQL Power BI 3yrs Lagos Nigeria banking",24000,NG
-"ML Engineer PyTorch computer vision Cape Town South Africa",58000,ZA
-```
-
-Fields: `description` (no personal names) · `salary_usd` (annual USD) · `country` (ISO 2-letter)
-
-[Open an issue](https://github.com/jameskoero/afrisalaries/issues) — all records anonymized before training.
-
----
-
-## 📄 License
-
-MIT — see [LICENSE](LICENSE).
+### v4.x — Planned
+- [ ] Browser extension: auto-predict on any African job board
+- [ ] Weekly retraining from accumulated feedback
+- [ ] Expand to 16 African countries
+- [ ] Peer-reviewed publication on African tech salary transparency
 
 ---
 
@@ -403,39 +381,46 @@ MIT — see [LICENSE](LICENSE).
 **James Onyango Koero**
 *Junior ML Engineer · Kisumu, Kenya 🇰🇪*
 
-B.Sc. Physics — Moi University (2012) · Self-taught ML Engineer since 2023
+B.Sc. Physics & Mathematics — Moi University (2012)
+Self-taught ML Engineer since 2023
 
 [![LinkedIn](https://img.shields.io/badge/LinkedIn-James_Koero-0077B5?style=for-the-badge&logo=linkedin)](https://linkedin.com/in/james-koero)
 [![GitHub](https://img.shields.io/badge/GitHub-jameskoero-181717?style=for-the-badge&logo=github)](https://github.com/jameskoero)
 [![Email](https://img.shields.io/badge/Email-jmskoero%40gmail.com-D14836?style=for-the-badge&logo=gmail)](mailto:jmskoero@gmail.com)
-[![CMDMS Live](https://img.shields.io/badge/Live_App-cmdms.onrender.com-46E3B7?style=for-the-badge&logo=render)](https://cmdms.onrender.com)
 
-**What this project demonstrates for technical hiring managers:**
+**What this project demonstrates:**
 
-| Skill | Where to See It |
-|-------|----------------|
-| End-to-end ML system design | Architecture diagram above |
-| NLP feature engineering | api/ml/features.py |
-| XGBoost regression pipeline | ml/train.py |
-| SHAP explainability | api/ml/predictor.py |
-| Async FastAPI + Pydantic v2 | api/main.py · api/routes/ |
-| Production async PostgreSQL | api/core/database.py |
-| Redis caching strategy | api/core/cache.py |
-| React data visualization | web/src/components/SalaryCard.jsx |
-| CI/CD + cloud deployment | .github/workflows/ci.yml · render.yaml |
+| Skill | Evidence |
+|-------|---------|
+| End-to-end ML pipeline | Stages 1–10: acquisition → cleaning → training → deployment |
+| Scientific honesty | Two failed models documented and diagnosed before pivot |
+| Real data engineering | 4,911 raw rows → 1,526 clean, year-specific FX rates |
+| Production deployment | Docker + Render + Vercel, $0/month |
+| Research methodology | Decision log, limitation disclosures, no inflated metrics |
+| Mobile-first engineering | Built entirely on Android (Termux + Colab) |
 
 > Open to remote ML / data science roles globally.
-> This project is my working proof of production ML thinking.
-
-**Repo:** [github.com/jameskoero/afrisalaries](https://github.com/jameskoero/afrisalaries)
+> This project is my working proof of end-to-end ML thinking —
+> including the failures that led to the right architecture.
 
 </div>
+
+---
+
+## 📄 Data License
+
+Training data sourced from Stack Overflow Annual Developer Survey 2022–2025,
+licensed under [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/).
+© Stack Exchange Inc. Attribution maintained throughout.
 
 ---
 
 <div align="center">
 
 ⭐ **Star this repo** if you believe African tech workers deserve pay transparency.
+
+*Built with intellectual honesty in Kisumu, Kenya.*
+*For the millions of African tech workers who deserve to know what their skills are worth.*
 
 <img src="https://capsule-render.vercel.app/api?type=waving&color=gradient&customColorList=6,11,20&height=100&section=footer" width="100%"/>
 
