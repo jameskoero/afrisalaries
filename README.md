@@ -379,7 +379,7 @@ API: `http://localhost:8000` · Docs: `http://localhost:8000/docs`
 <div align="center">
 
 **James Onyango Koero**
-*Junior ML Engineer · Kisumu, Kenya 🇰🇪*
+*ML Engineer · Kisumu, Kenya 🇰🇪*
 
 B.Sc. Physics & Mathematics — Moi University (2012)
 Self-taught ML Engineer since 2023
